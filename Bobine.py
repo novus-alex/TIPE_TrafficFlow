@@ -36,7 +36,7 @@ for i in np.arange(-0.1,0.1, 1/10000):
 
 E = []
 for i in range(len(Z)-1):
-    E.append(-(P[i+1] - P[i])/(P[i+1] - P[i]))
+    E.append(-(P[i+1] - P[i])/(Z[i+1] - Z[i]))
 
 #plt.plot(Z[0:-1],E)
 
