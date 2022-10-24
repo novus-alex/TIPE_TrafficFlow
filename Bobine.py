@@ -24,24 +24,36 @@ class Bobine:
         return self.B_cart(sqrt(r**2 + self.z**2), theta)*r
 
 
+class Tools:
+    def zDict(m, M, p):
+        Z, s = {}, 0
+        for i in np.arange(m, M, p):
+            Z[round(i, len([_ for _ in str(p)]))] = s; s += 1
+        return Z
+
+
 def flux(b, z):
     b.set_z(z)
     ress, err = integrate.dblquad(b.dB_cart, 0, b.R, 0, 2*pi)
     return ress
 
+def getSpeed(e, fp, Z, z):
+    return -e[Z.get(z)]/fp[Z.get(z)]
 
+Zr = Tools.zDict(-0.1, 0.1, 0.001)
+Zrange = list(Zr.keys())
 s = Bobine(0.2, 0.00000001); P = []; Z = []
-for i in np.arange(-0.1,0.1, 1/10000):
+for i in Zrange:
     P.append(flux(s, i)); Z.append(i)
 
 E = []
 for i in range(len(Z)-1):
-    E.append(-(P[i+1] - P[i])/(Z[i+1] - Z[i]))
+    E.append((P[i+1] - P[i])/(Z[i+1] - Z[i]))
 
-#plt.plot(Z[0:-1],E)
+print(getSpeed([1e-11 for i in range(len(Zrange))], E, Zr, 0.05))
 
-plt.plot(Z, P)
+plt.plot(Z[0:-1],E)
 plt.xlabel('z (m)')
-plt.ylabel('flux (Wb)')
-plt.title(f'Flux dans une bobine (R={s.R} m)')
+plt.ylabel('e (V)')
+plt.title(f'FEM dans une bobine (R={s.R} m)')
 plt.show()
