@@ -59,7 +59,7 @@ class Mesure:
     
     
 
-path=r"C:/Users/palme/OneDrive/Bureau/PC/Tipe/Programmes TIPE/Test site/Mesures"
+path=r"C:/Users/palme/OneDrive/Bureau/PC/Tipe/Programmes TIPE/Test site/Mesures2"
 os.chdir(path)
 Q=[]
 K=[]
@@ -69,8 +69,4 @@ for root,dirs, files in os.walk(path):
             m=Mesure(os.path.join(root,name))
             Q=Q+m.Flow
             K=K+m.Conc
-
-            
-plt.plot(K,Q,'+')
-plt.show()        
 
