@@ -1,4 +1,4 @@
-# Simulation du Traffic Routier
+# Simulation du Trafic Routier
 TIPE Option PC | Palmero Pierre-Antoine & Hachet Alexandre
 
 ## ToDo List
