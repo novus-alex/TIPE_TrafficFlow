@@ -6,4 +6,7 @@ TIPE Option PC | Palmero Pierre-Antoine & Hachet Alexandre
    - [x] Modélisation de la fem d'une bobine
 
  - ### Outils de traitement
-   - [ ] XML to CSV converter
+   - [ ] Convertisseur XML vers CSV
+   
+ - ### Modélisation
+   - [ ] Modèle python
