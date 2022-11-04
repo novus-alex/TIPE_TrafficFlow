@@ -30,4 +30,3 @@ def tri_fusion(L,M):
 M=tri_fusion(K, Q)
 K1=M[0]
 Q1=M[1]
-
