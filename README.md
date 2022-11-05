@@ -9,7 +9,7 @@ TIPE Option PC | Palmero Pierre-Antoine & Hachet Alexandre
    - [x] Convertisseur XML vers CSV
    
  - ### Modélisation
-   - [x] Simulation SOL2
+   - [ ] Simulation SOL2
    - [ ] Modèle python
    
  - ### Analyse
