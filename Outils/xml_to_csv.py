@@ -53,9 +53,4 @@ class XML:
                 _f.write(f"{id};{data[0]};{data[1]};{data[2]};{data[3]}\n")
 
 
-data = XML(BF.xml_url)
-data.parse_xml()
-data.to_csv("test.csv")
-
-
 
