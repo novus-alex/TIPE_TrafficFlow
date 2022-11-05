@@ -3,7 +3,6 @@ from matplotlib.ticker import MultipleLocator
 import numpy as np
 from random import gauss
 from recuperation_mesures import*
-from regression import*
 import pandas as pd
 
 def fusion(T,P):
