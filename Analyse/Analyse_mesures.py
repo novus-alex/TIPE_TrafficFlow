@@ -3,6 +3,7 @@ from matplotlib.ticker import MultipleLocator
 import numpy as np
 from random import gauss
 from recuperation_mesures import*
+from regression import*
 
 def fusion(T,P):
     L=[]
@@ -27,6 +28,58 @@ def tri_fusion(L,M):
         return [L[:],M[:]]
     else:
         return fusion(tri_fusion(L[:m],M[:m]),tri_fusion(L[m:],M[m:]))
+
+def max_i(L):
+    i_max=0
+    max=L[0]
+    for i in range(len(L)):
+        if L[i]>max:
+            max=L[i]
+            i_max=i
+    return i_max
+
+
+'''On range les liste par ordre croissants selon K'''
 M=tri_fusion(K, Q)
-K1=M[0]
-Q1=M[1]
+K1=M[0][:-2]
+Q1=M[1][:-2]
+
+'''On étudie la partie fluide, donc avant Q max qui est la capacité de la section (f pour fluide)'''
+C_i=max_i(Q1)
+Kf=K1[:C_i]
+Qf=Q1[:C_i]
+
+n=len(Kf)%10
+
+if n!=0:
+    Kf=Kf[:-n]
+    Qf=Qf[:-n]
+MQ=[]
+MK=[]
+for i in range(len(Kf)//20):
+    a=0
+    b=0
+    for j in range(20):
+        a+=Kf[j+i*20]
+        b+=Qf[j+i*20]
+    MK.append(a/20)
+    MQ.append(b/20)
+Kfin=[]
+Qfin=[]
+for i in range(len(Kf)//20):
+    A=[]
+    B=[]
+    for j in range(len(Kf)):
+        if Qf[j]>=0.8*MQ[i] and Qf[j]<=1.2*MQ[i]:
+            if Kf[j]>=0.9*MK[i] and Kf[j]<=1.1*MK[i]:
+                A.append(Kf[j])
+                Kfin.append(Kf[j])
+                B.append(Qf[j])
+                Qfin.append(Qf[j])
+    MK[i]=np.mean(A)
+    MQ[i]=np.mean(B)           
+ 
+plt.plot(Kf, Qf, '+')   
+plt.plot(MK, MQ)
+plt.plot(Kfin, Qfin, '+')
+plt.show()
