@@ -3,6 +3,7 @@ from matplotlib.ticker import MultipleLocator
 import numpy as np
 from random import gauss
 from recuperation_mesures import*
+from regression import*
 import pandas as pd
 
 def fusion(T,P):
@@ -47,13 +48,13 @@ def max_i2(L):
     return i_max
 
 '''On range les liste par ordre croissants selon K'''
-K,Q=getdata('all')
+K,Q=getdata('MM713.N1')
 M=tri_fusion(K, Q)
 
 
 '''fontion pour nettoyer les données'''
 
-def analyse(Kf,Qf):
+def analyse(Kf,Qf,e):
     n=len(Kf)%10
     
     if n!=0:
@@ -62,15 +63,15 @@ def analyse(Kf,Qf):
 
     MQ=[]
     MK=[]
-    for i in range(len(Kf)//200):
+    for i in range(len(Kf)//e):
         a=[]
         b=[]
-        for j in range(200):
-            a.append(Kf[j+i*200])
-            b.append(Qf[j+i*200])
+        for j in range(e):
+            a.append(Kf[j+i*e])
+            b.append(Qf[j+i*e])
             
-        da=pd.Series(a,dtype='int64')
-        db=pd.Series(b,dtype='int64')
+        da=pd.Series(a,dtype='float64')
+        db=pd.Series(b,dtype='float64')
         da.fillna(0)
         db.fillna(0)
         MK.append(np.mean(da))
@@ -84,7 +85,7 @@ def analyse(Kf,Qf):
 
     Kfin=[]
     Qfin=[]
-    for i in range(len(Kf)//200):
+    for i in range(len(Kf)//e):
         A=[]
         B=[]
         for j in range(len(Kf)):
@@ -95,8 +96,8 @@ def analyse(Kf,Qf):
                     B.append(Qf[j])
                     Qfin.append(Qf[j])
 
-        da=pd.Series(A,dtype='int64')
-        db=pd.Series(B,dtype='int64')
+        da=pd.Series(A,dtype='float64')
+        db=pd.Series(B,dtype='float64')
         da.fillna(0)
         db.fillna(0)
         MK[i]=np.mean(da)
@@ -108,15 +109,15 @@ def analyse(Kf,Qf):
     return Kfin, Qfin,MK,MQ
 
 '''On étudie la partie fluide, donc avant Q max qui est la capacité de la section (f pour fluide)'''
-        
+    
 C_i=max_i(M[1])
-Kf1,Qf1,MKf,MQf=analyse(M[0][:C_i],M[1][:C_i])
+Kf1,Qf1,MKf,MQf=analyse(M[0][:C_i],M[1][:C_i],2)
 
 '''On étudie la partie congestionnée, donc après Q max qui est la capacité de la section (c pour congestionnée)'''
-
+'''
 C_i=max_i2(M[1])
-Kc,Qc,MKc,MQc=analyse(M[0][C_i:],M[1][C_i:])
-
+Kc,Qc,MKc,MQc=analyse(M[0][C_i:],M[1][C_i:],10)
+'''
 
 '''plot'''
 
@@ -137,43 +138,12 @@ plt.plot(x,y)
 
 
 '''plot pour partie congestionnée'''
-
+'''
 a,b=np.polyfit(Kc,Qc,1)
 x=np.linspace(max(Kf1),max(Kc),1000)
 y=a*x+b
 plt.plot(Kc, Qc, '+')
 plt.plot(MKc, MQc)
 plt.plot(x,y)
-
+'''
 plt.show()
-''''''
-
-
-'''
-print(len(M[0]))
-plt.plot(M[0],M[1],'+')
-plt.show()
-'''
-
-
-'''
-
-a,b=np.polyfit(Kf, Qf,1)
-Kfin=[]
-Qfin=[]
-for j in range(1,11):
-    Kfin=[]
-    Qfin=[]
-    for i in range(len(Kf)):
-        if Qf[i]>=(1-0.5/j)*(a*Kf[i]+b) and Qf[i]<=(1+0.5/j)*(a*Kf[i]+b):
-            Kfin.append(Kf[i])
-            Qfin.append(Qf[i])
-            a,b=np.polyfit(Kfin, Qfin,1)
-x=np.linspace(0,50,1000)
-y=a*x+b
-print(len(Kfin))
-print(a,b)
-plt.plot(Kfin, Qfin)
-plt.plot(x,y)
-plt.show()
-'''
