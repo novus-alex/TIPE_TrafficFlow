@@ -47,6 +47,15 @@ def max_i2(L):
             i_max=i
     return i_max
 
+def nett(L):
+    dL=pd.Series(L,dtype='float64')
+    dL.fillna(0)
+    return dL
+def moyenne(L):
+    return np.mean(nett(L))
+
+
+
 '''On range les liste par ordre croissants selon K'''
 K,Q=getdata('MM713.N1')
 M=tri_fusion(K, Q)
@@ -55,7 +64,7 @@ M=tri_fusion(K, Q)
 '''fontion pour nettoyer les données'''
 
 def analyse(Kf,Qf,e):
-    n=len(Kf)%10
+    n=len(Kf)%e
     
     if n!=0:
         Kf=Kf[:-n]
@@ -69,43 +78,42 @@ def analyse(Kf,Qf,e):
         for j in range(e):
             a.append(Kf[j+i*e])
             b.append(Qf[j+i*e])
-            
-        da=pd.Series(a,dtype='float64')
-        db=pd.Series(b,dtype='float64')
-        da.fillna(0)
-        db.fillna(0)
-        MK.append(np.mean(da))
-        MQ.append(np.mean(db))
-        '''dmk=pd.Series(MK)
-        dmq=pd.Series(MQ)
-        dmk.fillna(0)
-        dmq.fillna(0)'''
-
-
-
+        
+        MK.append(moyenne(a))
+        MQ.append(moyenne(b))
+    a=[]
+    b=[]
+    for i in range(n):
+        a.append(Kf[i+(len(Kf)//e)])
+        b.append(Qf[i+(len(Kf)//e)])
+    MK.append(moyenne(a))
+    MQ.append(moyenne(b))
     Kfin=[]
     Qfin=[]
+    
     for i in range(len(Kf)//e):
         A=[]
         B=[]
         for j in range(len(Kf)):
-            if Qf[j]>=0.8*MQ[i] and Qf[j]<=1.2*MQ[i]:
-                if Kf[j]>=0.9*MK[i] and Kf[j]<=1.1*MK[i]:
+            if Qf[j]>=(0.9)*MQ[i] and Qf[j]<=(1.1)*MQ[i]:
+                if Kf[j]>=(0.9)*MK[i] and Kf[j]<=(1.1)*MK[i]:
                     A.append(Kf[j])
                     Kfin.append(Kf[j])
                     B.append(Qf[j])
                     Qfin.append(Qf[j])
-
-        da=pd.Series(A,dtype='float64')
-        db=pd.Series(B,dtype='float64')
-        da.fillna(0)
-        db.fillna(0)
-        MK[i]=np.mean(da)
-        MQ[i]=np.mean(db)
-        '''dmk=pd.Series(MK)
-        dmq=pd.Series(MQ)
-        dmk.fillna(0)
-        dmq.fillna(0)'''
+        MK[i]=moyenne(A)
+        MQ[i]=moyenne(B)
+    A=[]
+    B=[]
+    for j in range(n):
+        if Qf[j]>=(0.9)*MQ[-1] and Qf[j]<=(1.1)*MQ[-1]:
+            if Kf[j]>=(0.9)*MK[-1] and Kf[j]<=(1.1)*MK[-1]:
+                A.append(Kf[j])
+                Kfin.append(Kf[j])
+                B.append(Qf[j])
+                Qfin.append(Qf[j])
+    MK[-1]=moyenne(A)
+    MQ[-1]=moyenne(A)
     return Kfin, Qfin,MK,MQ
 
 '''On étudie la partie fluide, donc avant Q max qui est la capacité de la section (f pour fluide)'''
@@ -134,6 +142,7 @@ x=np.linspace(0,max(Kf1),1000)
 y=a*x+b
 plt.plot(Kf1, Qf1, '+')
 plt.plot(MKf, MQf)
+
 plt.plot(x,y)
 
 
