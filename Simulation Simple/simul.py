@@ -82,9 +82,6 @@ class Vehicle:
             else:
                 self.speed = 0
 
-            print(self.x)
-
-
         self.err.append(self.speed_pid.l_e[-1])
         self.pos.append(self.x)
         self.x += self.speed*dt*0.1
@@ -103,8 +100,6 @@ class PID:
         self.l_e[self.c%2] = e
         self.c += 1
         return (self.kp + self.ki*dt + self.kd/dt)*e + (-self.kp - 2*self.kd/dt)*self.l_e[0] + self.l_e[1]*self.kd/dt
-
-
 
 
 if __name__ == "__main__":
