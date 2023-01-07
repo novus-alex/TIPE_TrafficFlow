@@ -10,7 +10,7 @@ class Screen:
         self.max_x, self.max_y = 1000, 500
         self.scr = pygame.display.set_mode([self.max_x, self.max_y])
 
-        self.dt = 10
+        self.dt = 0.3
         self.N = 5000
         pygame.time.delay(100)
 
@@ -58,8 +58,6 @@ class Vehicle:
         self.speed = speed
         self.x, self.y = coord[0], coord[1]
 
-        self.speed_pid = PID(0.5, 0.01, 0.3)
-
         self.dist = 50
 
         self.pos = []; self.err = []
@@ -104,35 +102,20 @@ class Vehicle:
 
                 alpha = (self.s0 + max(0, self.T*self.v + delta_v*self.v/self.sqrt_ab)) / delta_x
 
-            self.a = self.a_max * (1-(self.v/self.v_max)**4 - alpha**2)
+                self.a = self.a_max * (1-(self.v/self.v_max)**4 - alpha**2)
+
+                if delta_x < 100:
+                    self.a = self.a = -self.b_max*self.v/self.v_max
+            
         else:
-            if self.speed >= 0 and self.speed < 0.5:
-                self.speed += self.speed_pid.compute(veh[i].x, 1000 - 50, dt)/dt
-            elif self.speed > 0.5:
-                self.speed = 0.5
+            if self.x < 500:
+                self.speed = self.v_max
+            elif self.x > 500 and self.x < 700:
+                self.speed = self.v_max*0.3
             else:
-                self.speed = 0
-
-        self.err.append(self.speed_pid.l_e[-1])
-        self.pos.append(self.x)
-        self.x += self.speed*dt*0.1
-
-
-class PID:
-    def __init__(self, kp, ki, kd):
-        self.kp, self.ki, self.kd = kp, ki, kd
-        self.l_e = [0, 0]
-        self.c = 0
-
-    def compute(self, position, target, dt):
-        e = target - position
-
-        self.l_e[self.c%2] = e
-        self.c += 1
-        return (self.kp + self.ki*dt + self.kd/dt)*e + (-self.kp - 2*self.kd/dt)*self.l_e[0] + self.l_e[1]*self.kd/dt
+                self.v = 0
+            self.x += self.speed*dt
 
 
 if __name__ == "__main__":
     t = Screen()
-    plt.plot(t.v[0].pos)
-    plt.show()
